@@ -20,9 +20,9 @@ db = client.dbvolleyball  # dbvolleyball라는 이름으로 데이터베이스�
 - 파이썬에 MongoDB를 돌아가게 해주는 패키지이다.
 """
 
-gameNum = '145'  # 경기순번 : 사용자에게 입력받을 변수
-gameTeam = '삼성화재'  # 사용자에게 입력받을 배구팀
-gameGender = '5';  # 사용자에게 입력받을 배구팀 성별 4 = 여자 / 5 = 남자
+gameNum = '150'  # 경기순번 : 사용자에게 입력받을 변수
+gameTeam = '현대건설'  # 사용자에게 입력받을 배구팀
+gameGender = '4';  # 사용자에게 입력받을 배구팀 성별 4 = 여자 / 5 = 남자
 
 # 타겟 URL을 읽어 HTML을 받아온다.
 headers = {'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36'}
@@ -107,7 +107,7 @@ doc = {
 '''
 # db.dbvolleyball.insert_one(doc)
 # 가장 처음 문자중계에서 set개수 구하기
-gameSetCount = requests.get('https://www.kovo.co.kr/media/popup_result.asp?season=016&g_part=201&r_round='+gameGender+'&g_num='+gameNum,headers=headers)
+gameSetCount = requests.get('https://www.kovo.co.kr/media/popup_result.asp?season=016&g_part=201&r_round=5&g_num='+gameNum,headers=headers)
 soupsc = BeautifulSoup(gameSetCount.text, 'html.parser')
 setCount = soupsc.select('.wrp_tab_set > ul > li')
 count = len(setCount)  # 세트의 개수
@@ -115,7 +115,7 @@ count = len(setCount)  # 세트의 개수
 # 세트의 개수만큼 반복문을 실행하여 서브개수 구하기 -> 서브의 개수로 랠리의 개수 판단 (총 랠리 개수 구하기)
 serveCnt = 0  # 서브최종개수
 for set in range(1, count+1):
-    gameSet = requests.get('https://www.kovo.co.kr/media/popup_result.asp?season=016&g_part=201&r_round=5&g_num=145&r_set='+str(set),headers=headers)
+    gameSet = requests.get('https://www.kovo.co.kr/media/popup_result.asp?season=016&g_part=201&r_round=5&g_num='+gameNum+'&r_set='+str(set),headers=headers)
     soupst = BeautifulSoup(gameSet.text, 'html.parser')
 
     serves = soupst.select('#onair_lst > ul > li > span')
@@ -170,7 +170,7 @@ for ption in range(1, serveCnt + 1):
     doc['position5'] = doc['position6']
     doc['position6'] = doc['position']
 
-# db.dbvolleyball.remove({});  # collection의 모든 데이터 삭제
+#db.dbvolleyball.remove({});  # collection의 모든 데이터 삭제
 
 # 예외사항 처리하기
 
