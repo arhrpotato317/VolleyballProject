@@ -80,6 +80,8 @@ elif gameTeam == teamTwo.text:
 
     ourTeamResult = teamTwoResult.text
 
+print(teamOne)
+print(teamTwo)
 print(ourTeam)
 print(opposeTeam)
 print(position1.text)
@@ -114,29 +116,62 @@ count = len(setCount)  # 세트의 개수
 
 # 세트의 개수만큼 반복문을 실행하여 서브개수 구하기 -> 서브의 개수로 랠리의 개수 판단 (총 랠리 개수 구하기)
 serveCnt = 0  # 서브최종개수
+AlltfArr = []  # 최종 T/F 배열
 for set in range(1, count+1):
     gameSet = requests.get('https://www.kovo.co.kr/media/popup_result.asp?season=016&g_part=201&r_round=5&g_num='+gameNum+'&r_set='+str(set),headers=headers)
     soupst = BeautifulSoup(gameSet.text, 'html.parser')
 
     serves = soupst.select('#onair_lst > ul > li > span')
-    print(serves)
+    #print(serves)
 
-    a = []  # 세트별 문자중계 텍스트 담기
+    serveArr = []  # 세트별 문자중계 텍스트 담기
 
     for serve in serves:
-        a.append(serve.text.strip())
-    print(a)
+        serveArr.append(serve.text.strip())
+    #print(serveArr)
     
     # '서브'라는 텍스트가 포함된 태그들의 개수 구하기
     search = '서브'
     match_list = list()
-    for word in a:
+    for word in serveArr:
         if search in word:
             match_list.append(word)
 
     count = len(match_list)
     serveCnt += count
+
+    # ourTeam의 T/F 구하기
+    scores = ''
+    if teamOne.text == ourTeam:
+        print('teamOne')
+        scores = soupst.select('#onair_lst > ul > li > span.score_left')
+    elif teamTwo.text == ourTeam:
+        print('teamTwo')
+        scores = soupst.select('#onair_lst > ul > li > span.score_right')
+
+    print(scores)
+    scoreArr = []
+
+    for score in scores:
+        if score.text.strip():
+            scoreArr.append(score.text.strip())
+    print(scoreArr)
+    tfArr = []
+    for i in range(0, len(scoreArr)):
+        if i > 0:
+            if(scoreArr[i-1]<scoreArr[i]):
+                print('T')
+                tfArr.append('T')
+            else:
+                print('F')
+                tfArr.append('F')
+    print(tfArr)
+    AlltfArr += tfArr
+
+    print(AlltfArr)
+
 print(serveCnt)
+print(len(AlltfArr))
 
 # 세트별 선수 포지션 설정하기 (테스트)
 # for ption in range(1, serveCnt + 1):
@@ -145,6 +180,7 @@ doc = {
     'ourTeam': ourTeam,  # 우리팀
     'opposeTeam': opposeTeam,  # 상대팀
     'ourTeamResult': ourTeamResult,  # 경기결과
+    'tandf': AlltfArr[0],
     'position1': position1.text,  # 1번 포지션
     'position2': position2.text,  # 2번 포지션
     'position3': position3.text,  # 3번 포지션
@@ -154,12 +190,15 @@ doc = {
 }
 
 # MongoDB에 기초 데이터 저장하기
-for ption in range(1, serveCnt + 1):
-    print(doc)
+for i in range(1, len(AlltfArr) + 1):
+    #print(doc)
     if '_id' in doc:
         del doc['_id']
 
+    doc['tandf'] = AlltfArr[i-1]
     db.dbvolleyball.insert_one(doc)
+
+
 
     # position : 중복을 피하기 위한 더미 변수
     doc['position'] = doc['position1']
