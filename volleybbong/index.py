@@ -180,46 +180,78 @@ doc = {
     'ourTeam': ourTeam,  # 우리팀
     'opposeTeam': opposeTeam,  # 상대팀
     'ourTeamResult': ourTeamResult,  # 경기결과
-    'tandf': AlltfArr[0],
     'position1': position1.text,  # 1번 포지션
     'position2': position2.text,  # 2번 포지션
     'position3': position3.text,  # 3번 포지션
     'position4': position4.text,  # 4번 포지션
     'position5': position5.text,  # 5번 포지션
-    'position6': position6.text   # 6번 포지션
+    'position6': position6.text,   # 6번 포지션
+    'tandf': AlltfArr[0]
 }
 
+# 센터 선수와 리베로 선수 크롤링
+
+centers = ''
+if teamOne.text == ourTeam:
+    print('teamOne')
+    centers = soup.select('.wrp_recordtable:first-child > .wrp_lst > .lst_board > tbody > tr > td')
+elif teamTwo.text == ourTeam:
+    print('teamTwo')
+    centers = soup.select('.wrp_recordtable:last-child > .wrp_lst > .lst_board > tbody > tr > td')
+print(centers)
+
+centerArr = []  # 세트별 문자중계 텍스트 담기
+
+for center in centers:
+    centerArr.append(center.text.strip())
+print(centerArr)
+
+# '[C]':센터 - 라는 텍스트가 포함된 태그들의 개수 구하기
+searchCenter = '[C]'
+center_list = list()
+for word in centerArr:
+    if searchCenter in word:
+        center_list.append(word[:3])
+print(center_list)
+
+# '[Li]':리베로 - 라는 텍스트가 포함된 태그들의 개수 구하기
+searchLi = '[Li]'
+Li_list = list()
+for word in centerArr:
+    if searchLi in word:
+        Li_list.append(word[:3])
+print(Li_list)
+
 # MongoDB에 기초 데이터 저장하기
-for i in range(1, len(AlltfArr) + 1):
-    #print(doc)
+for i in range(1, len(AlltfArr)+1):
     if '_id' in doc:
         del doc['_id']
 
     doc['tandf'] = AlltfArr[i-1]
+    # 2) 센터와 리베로 선수교체
+    if doc['position6'] == center_list[0]:
+        doc['position6'] = Li_list[0]
+    elif doc['position5'] == center_list[0]:
+        doc['position5'] = Li_list[0]
+    elif doc['position4'] == Li_list[0]:
+        doc['position4'] = center_list[0]
+
     db.dbvolleyball.insert_one(doc)
 
-
-
-    # position : 중복을 피하기 위한 더미 변수
-    doc['position'] = doc['position1']
-    doc['position1'] = doc['position2']
-    doc['position2'] = doc['position3']
-    doc['position3'] = doc['position4']
-    doc['position4'] = doc['position5']
-    doc['position5'] = doc['position6']
-    doc['position6'] = doc['position']
+    # 예외사항 처리하기
+    # 1) T/F판별하기
+    if i < len(AlltfArr):
+        if AlltfArr[i-2] == 'F' and AlltfArr[i-1] == 'T':
+            # position : 중복을 피하기 위한 더미 변수
+            doc['position'] = doc['position1']
+            doc['position1'] = doc['position2']
+            doc['position2'] = doc['position3']
+            doc['position3'] = doc['position4']
+            doc['position4'] = doc['position5']
+            doc['position5'] = doc['position6']
+            doc['position6'] = doc['position']
 
 #db.dbvolleyball.remove({});  # collection의 모든 데이터 삭제
-
-# 예외사항 처리하기
-
-
-
-
-    
-
-
-
 
 
 
