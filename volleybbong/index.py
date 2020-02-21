@@ -21,9 +21,10 @@ db = client.dbvolleyball  # dbvolleyball라는 이름으로 데이터베이스�
 """
 
 # ######### 사용자에게 입력받을 정보
-gameNum = '147'  # 경기순번
-gameTeam = '현대캐피탈'  # 사용자가 원하는 배구팀
-gameGender = '5'  # 배구팀 성별 4 = 여자 / 5 = 남자
+gameNum = '146'  # 경기순번
+gameTeam = '흥국생명'  # 사용자가 원하는 배구팀
+gameGender = '4'  # 배구팀 성별 4 = 여자 / 5 = 남자
+gamePlayer = '김세영'
 
 # ######### 타겟 URL을 읽어 HTML을 받아온다.
 headers = {'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36'}
@@ -100,6 +101,7 @@ setCount = len(sets)  # 세트의 개수
 print('세트의 개수 : ' + str(setCount))
 
 # ######### 각 세트의 스코어 크롤링 -> 랠리의 총 개수 찾기
+setArr = []  # 세트 배열
 AlltfArr = []  # 최종 T/F 배열
 for set in range(1, setCount+1):
 
@@ -126,18 +128,25 @@ for set in range(1, setCount+1):
         if i > 0:
             if(scoreArr[i-1] < scoreArr[i]):
                 tfArr.append('T')
+                setArr.append(set)
             else:
                 tfArr.append('F')
+                setArr.append(set)
     AlltfArr += tfArr  # 세트별 T/F 모두 합한다.
 
 print('득실 배열 : ' + str(AlltfArr))
+print(len(AlltfArr))
+print('세트 배열 : ' + str(setArr))
+print(len(setArr))
 
 # ######### 세트별 선수 포지션 설정하기
 doc = {
     'gameDate': gameDate.text,  # 경기일자
+    'gameNumber': gameNum,  # 경기번호
     'ourTeam': ourTeam,  # 우리팀
     'opposeTeam': opposeTeam,  # 상대팀
     'ourTeamResult': ourTeamResult,  # 경기결과
+    'set': setArr[0],  # 세트
     'position1': position1.text,  # 1번 포지션
     'position2': position2.text,  # 2번 포지션
     'position3': position3.text,  # 3번 포지션
@@ -184,7 +193,8 @@ for i in range(1, len(AlltfArr)+1):
     if '_id' in doc:
         del doc['_id']
 
-    doc['profit'] = AlltfArr[i-1]
+    doc['set'] = setArr[i - 1]
+    doc['profit'] = AlltfArr[i - 1]
     # 예외사항 2) 센터와 리베로 선수교체
     if doc['position6'] == center_list[0]:
         doc['position6'] = li_list[0]
@@ -193,7 +203,7 @@ for i in range(1, len(AlltfArr)+1):
     elif doc['position4'] == li_list[0]:
         doc['position4'] = center_list[0]
 
-    db.dbvolleyball.insert_one(doc)
+    #db.dbvolleyball.insert_one(doc)
 
     # 예외사항 1) T/F 정보를 이용하여 로테이션 여부 판단
     if i < len(AlltfArr):
@@ -209,9 +219,48 @@ for i in range(1, len(AlltfArr)+1):
 
 #db.dbvolleyball.remove({});  # collection의 모든 데이터 삭제
 
+# ################## 데이터베이스에서 데이터 가져오기 - 해당하는 선수의 각 포지션의 득점과 실점
+# 포지션 1번 득점과 실점
+pt1T_list = list(db.dbvolleyball.find({'gameNumber': gameNum, 'position1': gamePlayer, 'profit': 'T'}))
+print('포지션1에서 T의 개수 : ' + str(len(pt1T_list)))
+pt1F_list = list(db.dbvolleyball.find({'gameNumber': gameNum, 'position1': gamePlayer, 'profit': 'F'}))
+print('포지션1에서 F의 개수 : ' + str(len(pt1F_list)))
+print('마진 : ' + str(len(pt1T_list) - len(pt1F_list)))
 
+# 포지션 2번 득점과 실점
+pt2T_list = list(db.dbvolleyball.find({'gameNumber': gameNum, 'position2': gamePlayer, 'profit': 'T'}))
+print('포지션2에서 T의 개수 : ' + str(len(pt2T_list)))
+pt2F_list = list(db.dbvolleyball.find({'gameNumber': gameNum, 'position2': gamePlayer, 'profit': 'F'}))
+print('포지션2에서 F의 개수 : ' + str(len(pt2F_list)))
+print('마진 : ' + str(len(pt2T_list) - len(pt2F_list)))
 
+# 포지션 3번 득점과 실점
+pt3T_list = list(db.dbvolleyball.find({'gameNumber': gameNum, 'position3': gamePlayer, 'profit': 'T'}))
+print('포지션3에서 T의 개수 : ' + str(len(pt3T_list)))
+pt3F_list = list(db.dbvolleyball.find({'gameNumber': gameNum, 'position3': gamePlayer, 'profit': 'F'}))
+print('포지션3에서 F의 개수 : ' + str(len(pt3F_list)))
+print('마진 : ' + str(len(pt3T_list) - len(pt3F_list)))
 
+# 포지션 4번 득점과 실점
+pt4T_list = list(db.dbvolleyball.find({'gameNumber': gameNum, 'position4': gamePlayer, 'profit': 'T'}))
+print('포지션4에서 T의 개수 : ' + str(len(pt4T_list)))
+pt4F_list = list(db.dbvolleyball.find({'gameNumber': gameNum, 'position4': gamePlayer, 'profit': 'F'}))
+print('포지션4에서 F의 개수 : ' + str(len(pt4F_list)))
+print('마진 : ' + str(len(pt4T_list) - len(pt4F_list)))
+
+# 포지션 5번 득점과 실점
+pt5T_list = list(db.dbvolleyball.find({'gameNumber': gameNum, 'position5': gamePlayer, 'profit': 'T'}))
+print('포지션5에서 T의 개수 : ' + str(len(pt5T_list)))
+pt5F_list = list(db.dbvolleyball.find({'gameNumber': gameNum, 'position5': gamePlayer, 'profit': 'F'}))
+print('포지션5에서 F의 개수 : ' + str(len(pt5F_list)))
+print('마진 : ' + str(len(pt5T_list) - len(pt5F_list)))
+
+# 포지션 6번 득점과 실점
+pt6T_list = list(db.dbvolleyball.find({'gameNumber': gameNum, 'position6': gamePlayer, 'profit': 'T'}))
+print('포지션6에서 T의 개수 : ' + str(len(pt6T_list)))
+pt6F_list = list(db.dbvolleyball.find({'gameNumber': gameNum, 'position6': gamePlayer, 'profit': 'F'}))
+print('포지션6에서 F의 개수 : ' + str(len(pt6F_list)))
+print('마진 : ' + str(len(pt6T_list) - len(pt6F_list)))
 
 
 
