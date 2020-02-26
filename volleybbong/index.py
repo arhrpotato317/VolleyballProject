@@ -1,6 +1,8 @@
 import requests
 from bs4 import BeautifulSoup
 
+from datetime import datetime
+
 from flask import Flask, render_template, jsonify, request
 app = Flask(__name__)
 
@@ -53,6 +55,12 @@ def month_get():
 def number_post():
     # 파라미터를 가져온다. request body 요청 - form data 형식
     month_receive = request.form['month']  # 경기년도/월 요청정보
+    # nowDate = datetime.today().strftime("%Y%m%d%H%M%S")  # YYYYMMDDHHMMSS 형태의 시간 출력
+    nowMonth = datetime.today().month  # 현재 월 가져오기
+
+    # 오늘날짜를 앞서간 경기일자 선택 막기
+    if int(month_receive[-1:]) > int(nowMonth):
+        return jsonify({'result': 'fail', 'msg': '이번달과 이전의 경기일자를 선택해주세요.'})
 
     # 경기년도/월에 해당하는 경기정보 페이지
     gameMonthPage = requests.get('https://www.kovo.co.kr/game/v-league/11110_schedule_list.asp?season=016&team=&yymm='+month_receive, headers=headers)
@@ -67,9 +75,9 @@ def number_post():
     for i in range(0, numCount):
         if gameGender[i].text == '여자':
             value = gameNumber[i].text.strip()
-            print(value)
             NumberArr.append(value)
-    return jsonify(NumberArr)
+
+    return jsonify({'result': 'success', 'msg': NumberArr})
 
 # 경기번호에 해당하는 경기팀 불러오기
 @app.route('/team', methods=['POST'])
