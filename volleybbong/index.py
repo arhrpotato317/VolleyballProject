@@ -95,6 +95,7 @@ def team_post():
     for game in range(0, gameNumCnt):
         if NumberArr[game] == number_receive:
             gameRound = (gameRowRound[game].text)[4:5]
+    print("round : " + gameRound)
 
     # 해당경기의 상세결과 페이지
     gameDetailPage = requests.get('https://www.kovo.co.kr/game/v-league/11141_game-summary.asp?season=016&g_part=201&r_round='+gameRound+'&g_num='+number_receive+'&', headers=headers)
@@ -133,10 +134,11 @@ def player_post():
     gameRowRound = monthPage.select(".lst_schedule > tbody > tr > td:nth-child(9)")  # 경기 라운드
 
     # 경기번호에 해당하는 경기라운드 데이터 가져오기
-    gameRound = ''
+    gameRound = ''  # 경기 라운드
     for game in range(0, gameNumCnt):
-        if gameRowNum[game].text == number_receive:
+        if NumberArr[game] == number_receive:
             gameRound = (gameRowRound[game].text)[4:5]
+    print("round : " + gameRound)
 
     # 해당경기의 상세결과 페이지
     gameDetailPage = requests.get('https://www.kovo.co.kr/game/v-league/11141_game-summary.asp?season=016&g_part=201&r_round='+gameRound+'&g_num='+number_receive+'&', headers=headers)
@@ -147,7 +149,6 @@ def player_post():
     teamTwo = detailPage.select_one('.lst_recentgame > tbody > tr > td.team:last-child span.team')  # 경기 팀 2
     print("teamOne : " + teamOne.text)
     print("teamTwo : " + teamTwo.text)
-    print("round : " + gameRound)
 
     # 해당경기의 문자중계 페이지
     gameCastPage = requests.get('https://www.kovo.co.kr/media/popup_result.asp?season=016&g_part=201&r_round='+gameRound+'&g_num='+number_receive, headers=headers)
@@ -182,6 +183,7 @@ def player_post():
     playerResult.append(position4.text)
     playerResult.append(position5.text)
     playerResult.append(position6.text)
+    print('position1 : ' + position1.text)
 
     return jsonify(playerResult)
 
@@ -200,24 +202,23 @@ def volley_post():
     gameMonthPage = requests.get('https://www.kovo.co.kr/game/v-league/11110_schedule_list.asp?season=016&team=&yymm='+gameMonth, headers=headers)
     monthPage = BeautifulSoup(gameMonthPage.text, 'html.parser')
 
-    gameRowNum = monthPage.select(".lst_schedule > tbody > tr > td:nth-child(2)")  # 해당 월의 모든 경기번호
+    gameRowNum = monthPage.select(".lst_schedule > tbody > tr > td:nth-child(2)")  # 해당 년도의 모든 경기번호
     NumberArr = []  # 경기번호를 담은 배열
     for number in gameRowNum:
         value = number.text.strip()
         if value == '':
             continue
         NumberArr.append(value)
-    # 해당 월의 모든 경기번호 개수
     gameNumCnt = len(NumberArr)
 
-    gameRowRound = monthPage.select(".lst_schedule > tbody > tr > td:nth-child(9)")  # 해당 월의 모든 경기 라운드
+    gameRowRound = monthPage.select(".lst_schedule > tbody > tr > td:nth-child(9)")  # 해당 년도의 모든 경기 라운드
 
     # 경기번호에 해당하는 경기라운드 데이터 가져오기
-    gameRound = ''
+    gameRound = ''  # 경기 라운드
     for game in range(0, gameNumCnt):
-        if gameRowNum[game].text == gameNum:
+        if NumberArr[game] == gameNum:
             gameRound = (gameRowRound[game].text)[4:5]
-    print("경기 라운드 : " + gameRound)  # 경기의 라운드
+    print("round : " + gameRound)
 
     # ##### 1. 한국 배구연맹 경기에 대한 상세결과 페이지 - 경기일자 / 우리팀 / 상대팀 / 최종 경기결과 크롤링
     gameDetailPage = requests.get('https://www.kovo.co.kr/game/v-league/11141_game-summary.asp?season=016&g_part=201&r_round='+gameRound+'&g_num='+gameNum+'&',headers=headers)
@@ -258,7 +259,7 @@ def volley_post():
         position5 = castPage.select_one('#tab1 > .position > .left01 > li:first-child')
         position6 = castPage.select_one('#tab1 > .position > .left01 > li:nth-child(2)')
         # 리베로 선수
-        libero = castPage.select_one('#tab1 > .position > .li01 > li:first-child')
+        libero = (castPage.select_one('#tab1 > .position > .li01 > li:first-child').text)[4:7]
 
         ourTeamResult = teamOneResult.text
 
@@ -272,7 +273,7 @@ def volley_post():
         position5 = castPage.select_one('#tab1 > .position > .right02 > li:last-child')
         position6 = castPage.select_one('#tab1 > .position > .right02 > li:nth-child(2)')
         # 리베로 선수
-        libero = castPage.select_one('#tab1 > .position > .li02 > li:first-child')
+        libero = (castPage.select_one('#tab1 > .position > .li02 > li:first-child').text)[4:7]
 
         ourTeamResult = teamTwoResult.text
 
@@ -285,7 +286,7 @@ def volley_post():
     print('4번 포지션 : ' + position4.text)
     print('5번 포지션 : ' + position5.text)
     print('6번 포지션 : ' + position6.text)
-    print('리베로 선수 : ' + libero.text)
+    print('리베로 선수 : ' + libero)
 
     # ##### 문자중계 페이지에서 총 랠리 개수 구하기 * 최종적으로 T(득점)과 F(실점) 데이터와 포지션 로테이션에 필요 *
     sets = castPage.select('.wrp_tab_set > ul > li')
@@ -343,7 +344,7 @@ def volley_post():
         'position4': position4.text,  # 4번 포지션
         'position5': position5.text,  # 5번 포지션
         'position6': position6.text,   # 6번 포지션
-        'libero': libero.text,  # 리베로 선수
+        'libero': libero,  # 리베로 선수
         'profit': AlltfArr[0]  # 득점 실점 정보 - T:득점 / F:실점
     }
 
@@ -378,6 +379,9 @@ def volley_post():
 
         doc['set'] = setArr[i - 1]
         doc['profit'] = AlltfArr[i - 1]
+
+        db.dbvolleyball.insert_one(doc)
+
         # 예외사항 2) 센터와 리베로 선수교체
         if doc['position6'] == center_list[0]:
             doc['position6'] = doc['libero']
@@ -398,8 +402,7 @@ def volley_post():
                 doc['position5'] = doc['position6']
                 doc['position6'] = doc['position']
 
-        db.dbvolleyball.insert_one(doc)
-        db.dbvolleyball.remove({});  # collection의 모든 데이터 삭제
+        #db.dbvolleyball.remove({});  # collection의 모든 데이터 삭제
 
     # ################## 데이터베이스에서 데이터 가져오기 - 해당하는 선수의 각 포지션의 득점과 실점
     # 포지션 1번 득점과 실점
