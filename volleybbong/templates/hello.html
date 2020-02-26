@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>사용자 입력</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <script>
+        // 경기년도/월 불러오기
+        $(document).ready(function() {
+            $.ajax({
+                type: "GET",
+                url: "/month",
+                success: function(response) {
+                    alert('경기년도/월 정보를 불러왔습니다.');
+                    console.log(response);
+                    for(var i=0; i<response.length; i++) {
+                        optionMonth(response[i])
+                    }
+                }
+            })
+        });
+        function optionMonth(insertValue) {
+            let monthHtml = '<option value="'+insertValue+'">'+insertValue+'</option>';
+            $('#gameMonth').append(monthHtml);
+        }
+
+        // 경기년도에 해당하는 경기번호 불러오기
+        $(document).on("change", "#gameMonth", function() {
+            var gameMonthVal = $('#gameMonth').val();
+            $.ajax({
+                type:"POST",
+                url: "/number",
+                data: { month: gameMonthVal },
+                success: function(response) {
+                    alert('경기번호를 불러왔습니다.');
+                    console.log(response);
+                    for(var i=0; i<response.length; i++) {
+                        optionNumber(response[i])
+                    }
+                }
+            })
+		});
+		function optionNumber(insertValue) {
+		    let numberHtml = '<option value="'+insertValue+'">'+insertValue+'</option>';
+		    $('#gameNum').append(numberHtml);
+		}
+
+		// 경기번호에 해당하는 배구팀 불러오기
+		$(document).on("change", "#gameNum", function() {
+		    var gameMonthVal = $('#gameMonth').val();
+            var gameNumVal = $('#gameNum').val();
+            $.ajax({
+                type:"POST",
+                url: "/team",
+                data: { month: gameMonthVal, number: gameNumVal },
+                success: function(response) {
+                    alert('경기팀을 불러왔습니다.');
+                    console.log(response);
+                    for(var i=0; i<response.length; i++) {
+                        optionTeam(response[i])
+                    }
+                }
+            })
+		});
+        function optionTeam(insertValue) {
+		    let teamHtml = '<option value="'+insertValue+'">'+insertValue+'</option>';
+		    $('#gameTeam').append(teamHtml);
+		}
+
+		// 배구팀에 해당하는 선수 불러오기
+		$(document).on("change", "#gameTeam", function() {
+		    var gameMonthVal = $('#gameMonth').val();
+            var gameNumVal = $('#gameNum').val();
+            var gameTeamVal = $('#gameTeam').val();
+            $.ajax({
+                type:"POST",
+                url: "/player",
+                data: { month: gameMonthVal, number: gameNumVal, team: gameTeamVal },
+                success: function(response) {
+                    alert('선수를 불러왔습니다.');
+                    console.log(response);
+                    for(var i=0; i<response.length; i++) {
+                        optionPlayer(response[i])
+                    }
+                }
+            })
+		})
+        function optionPlayer(insertValue) {
+		    let playerHtml = '<option value="'+insertValue+'">'+insertValue+'</option>';
+		    $('#gamePlayer').append(playerHtml);
+		}
+
+        // 최종 데이터 요청
+		function register() {
+            var gameMonthVal = $('#gameMonth').val();
+            var gameNumVal = $('#gameNum').val();
+            var gameTeamVal = $('#gameTeam').val();
+            var gamePlayerVal = $('#gamePlayer').val();
+
+            $.ajax({
+                type: "POST",
+                url: "/volley",
+                data: {
+                        gameMonth: gameMonthVal,
+                        gameNum: gameNumVal,
+                        gameTeam: gameTeamVal,
+                        gamePlayer: gamePlayerVal
+                    },
+                success: function(response) {
+                    alert('선수의 기록을 불러왔습니다.');
+                    console.log(response);
+                    $('#result_table tbody').html('');
+                    allInfo(
+                        response['pt1T_list'], response['pt1F_list'], response['pt1Margin'],
+                        response['pt2T_list'], response['pt2F_list'], response['pt2Margin'],
+                        response['pt3T_list'], response['pt3F_list'], response['pt3Margin'],
+                        response['pt4T_list'], response['pt4F_list'], response['pt4Margin'],
+                        response['pt5T_list'], response['pt5F_list'], response['pt5Margin'],
+                        response['pt6T_list'], response['pt6F_list'], response['pt6Margin']
+                    )
+                }
+            })
+        }
+        function allInfo(pt1T_list, pt1F_list, pt1Margin,
+                         pt2T_list, pt2F_list, pt2Margin,
+                         pt3T_list, pt3F_list, pt3Margin,
+                         pt4T_list, pt4F_list, pt4Margin,
+                         pt5T_list, pt5F_list, pt5Margin,
+                         pt6T_list, pt6F_list, pt6Margin) {
+            let infoHtml = '<tr>\
+                                <td>1</td>\
+                                <td>'+pt1T_list+'</td>\
+                                <td>'+pt1F_list+'</td>\
+                                <td>'+pt1Margin+'</td>\
+                            </tr>\
+                            <tr>\
+                                <td>2</td>\
+                                <td>'+pt2T_list+'</td>\
+                                <td>'+pt2F_list+'</td>\
+                                <td>'+pt2Margin+'</td>\
+                            </tr>\
+                            <tr>\
+                                <td>3</td>\
+                                <td>'+pt3T_list+'</td>\
+                                <td>'+pt3F_list+'</td>\
+                                <td>'+pt3Margin+'</td>\
+                            </tr>\
+                            <tr>\
+                                <td>4</td>\
+                                <td>'+pt4T_list+'</td>\
+                                <td>'+pt4F_list+'</td>\
+                                <td>'+pt4Margin+'</td>\
+                            </tr>\
+                            <tr>\
+                                <td>5</td>\
+                                <td>'+pt5T_list+'</td>\
+                                <td>'+pt5F_list+'</td>\
+                                <td>'+pt5Margin+'</td>\
+                            </tr>\
+                            <tr>\
+                                <td>6</td>\
+                                <td>'+pt6T_list+'</td>\
+                                <td>'+pt6F_list+'</td>\
+                                <td>'+pt6Margin+'</td>\
+                            </tr>';
+            $('#result_table tbody').append(infoHtml);
+        }
+    </script>
+</head>
+<body>
+    <form method="POST">
+        <select id="gameMonth">
+            <option value="0" selected>경기 날짜</option>
+        </select>
+        <select id="gameNum">
+            <option value="0" selected>경기 순번</option>
+        </select>
+        <select id="gameTeam">
+            <option value="0" selected>배구팀</option>
+        </select>
+        <select id="gamePlayer">
+            <option value="0" selected>배구선수</option>
+        </select>
+
+        <button type="button" onclick="register()">등록</button>
+    </form>
+
+    <table id="result_table">
+        <thead>
+            <tr>
+                <th>포지션</th>
+                <th>T의 개수</th>
+                <th>F의 개수</th>
+                <th>마진</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</body>
+</html>
