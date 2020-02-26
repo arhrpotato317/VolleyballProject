@@ -48,7 +48,7 @@ for month in gameMonth:
 def month_get():
     return jsonify(MonthArr)
 
-# 경기년도에 해당하는 경기번호 데이터 가져오기
+# 경기년도에 해당하는 경기번호 데이터 가져오기 (여자배구)
 @app.route('/number', methods=['POST'])
 def number_post():
     # 파라미터를 가져온다. request body 요청 - form data 형식
@@ -58,15 +58,17 @@ def number_post():
     gameMonthPage = requests.get('https://www.kovo.co.kr/game/v-league/11110_schedule_list.asp?season=016&team=&yymm='+month_receive, headers=headers)
     monthPage = BeautifulSoup(gameMonthPage.text, 'html.parser')
 
-    gameNumber = monthPage.select(".lst_schedule > tbody > tr > td:nth-child(2)")
+    gameNumber = monthPage.select(".lst_schedule > tbody > tr > td:nth-child(2)")  # 해당하는 모든 경기번호
+    gameGender = monthPage.select(".lst_schedule > tbody > tr > td:nth-child(3)")  # 해당하는 모든 경기의 성별
 
+    # 여자배구만 가져오기
+    numCount = len(gameNumber)
     NumberArr = []  # 경기번호를 담은 배열
-    for number in gameNumber:
-        value = number.text.strip()
-        if value == '':
-            continue
-        NumberArr.append(value)
-
+    for i in range(0, numCount):
+        if gameGender[i].text == '여자':
+            value = gameNumber[i].text.strip()
+            print(value)
+            NumberArr.append(value)
     return jsonify(NumberArr)
 
 # 경기번호에 해당하는 경기팀 불러오기
