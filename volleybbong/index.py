@@ -55,12 +55,17 @@ def month_get():
 def number_post():
     # 파라미터를 가져온다. request body 요청 - form data 형식
     month_receive = request.form['month']  # 경기년도/월 요청정보
-    # nowDate = datetime.today().strftime("%Y%m%d%H%M%S")  # YYYYMMDDHHMMSS 형태의 시간 출력
-    nowMonth = datetime.today().month  # 현재 월 가져오기
 
-    # 오늘날짜를 앞서간 경기일자 선택 막기
-    if int(month_receive[-1:]) > int(nowMonth):
-        return jsonify({'result': 'fail', 'msg': '이번달과 이전의 경기일자를 선택해주세요.'})
+    # 경기 일자 제한하기
+    nowYear = datetime.today().year  # 현재 연도 가져오기
+    nowMonth = datetime.today().month  # 현재 월 가져오기
+    print('현재 년도 : ' +str(nowYear)+", 현재 월 : " +str(nowMonth))
+
+    print(month_receive[:4])
+    if int(month_receive[:4]) >= nowYear:
+        print(month_receive[-2:])
+        if int(month_receive[-2:]) > nowMonth:
+            return jsonify({'result': 'fail', 'msg': '이번달과 이전의 경기일자를 선택해주세요.'})
 
     # 경기년도/월에 해당하는 경기정보 페이지
     gameMonthPage = requests.get('https://www.kovo.co.kr/game/v-league/11110_schedule_list.asp?season=016&team=&yymm='+month_receive, headers=headers)
@@ -119,7 +124,15 @@ def team_post():
     teamResult.append(teamOne.text)
     teamResult.append(teamTwo.text)
 
-    return jsonify(teamResult)
+    # 경기 일자 제한하기
+    limitGameRowDate = detailPage.select_one('.lst_recentgame > thead > tr > th')  # 경기일자
+    limitDate = (limitGameRowDate.text)[13:15]
+    nowDay = datetime.today().day  # 현재 일 가져오기
+
+    if int(limitDate) > int(nowDay):
+        return jsonify({'result': 'fail', 'msg': '경기시작 전입니다. 경기의 상세정보가 없습니다.'})
+
+    return jsonify({'result': 'success', 'msg': teamResult})
 
 # 경기팀에 해당하는 선수 불러오기
 @app.route('/player', methods=['POST'])

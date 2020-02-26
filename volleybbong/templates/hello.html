@@ -60,10 +60,15 @@
                 url: "/team",
                 data: { month: gameMonthVal, number: gameNumVal },
                 success: function(response) {
-                    alert('경기팀을 불러왔습니다.');
                     console.log(response)
-                    for(var i=0; i<response.length; i++) {
-                        optionTeam(response[i])
+                    if(response["result"] == "success") {
+                        alert('경기팀을 불러왔습니다.');
+                        console.log(response["msg"]);
+                        for(var i=0; i<response["msg"].length; i++) {
+                            optionTeam(response["msg"][i])
+                        }
+                    } else {
+                        alert(response["msg"]);
                     }
                 }
             })
