@@ -14,7 +14,6 @@
                 type: "GET",
                 url: "/month",
                 success: function(response) {
-                    alert('경기년도/월 정보를 불러왔습니다.');
                     console.log(response);
                     for(var i=0; i<response.length; i++) {
                         optionMonth(response[i])
@@ -30,11 +29,13 @@
         // 경기년도에 해당하는 경기번호 불러오기
         $(document).on("change", "#gameMonth", function() {
             var gameMonthVal = $('#gameMonth').val();
+            $('#gameNum').html('<option>경기번호</option>');
             $.ajax({
                 type:"POST",
                 url: "/number",
                 data: { month: gameMonthVal },
                 success: function(response) {
+
                     console.log(response)
                     if(response["result"] == "success") {
                         alert('경기번호를 불러왔습니다.');
@@ -57,6 +58,7 @@
 		$(document).on("change", "#gameNum", function() {
 		    var gameMonthVal = $('#gameMonth').val();
             var gameNumVal = $('#gameNum').val();
+            $('#gameTeam').html('<option>배구팀</option>');
             $.ajax({
                 type:"POST",
                 url: "/team",
@@ -85,6 +87,7 @@
 		    var gameMonthVal = $('#gameMonth').val();
             var gameNumVal = $('#gameNum').val();
             var gameTeamVal = $('#gameTeam').val();
+            $('#gamePlayer').html('<option>배구선수</option>');
             $.ajax({
                 type:"POST",
                 url: "/player",
