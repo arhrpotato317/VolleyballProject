@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>사용자 입력</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
     <script>
@@ -120,7 +121,7 @@
                 success: function(response) {
                     alert('선수의 기록을 불러왔습니다.');
                     console.log(response)
-                    $('#result_table tbody').html('');
+                    $('.position_wrap').html('');
                     allInfo(
                         response['pt1T_list'], response['pt1F_list'], response['pt1Margin'],
                         response['pt2T_list'], response['pt2F_list'], response['pt2Margin'],
@@ -138,74 +139,117 @@
                          pt4T_list, pt4F_list, pt4Margin,
                          pt5T_list, pt5F_list, pt5Margin,
                          pt6T_list, pt6F_list, pt6Margin) {
-            let infoHtml = '<tr>\
-                                <td>1</td>\
-                                <td>'+pt1T_list+'</td>\
-                                <td>'+pt1F_list+'</td>\
-                                <td>'+pt1Margin+'</td>\
-                            </tr>\
-                            <tr>\
-                                <td>2</td>\
-                                <td>'+pt2T_list+'</td>\
-                                <td>'+pt2F_list+'</td>\
-                                <td>'+pt2Margin+'</td>\
-                            </tr>\
-                            <tr>\
-                                <td>3</td>\
-                                <td>'+pt3T_list+'</td>\
-                                <td>'+pt3F_list+'</td>\
-                                <td>'+pt3Margin+'</td>\
-                            </tr>\
-                            <tr>\
-                                <td>4</td>\
-                                <td>'+pt4T_list+'</td>\
-                                <td>'+pt4F_list+'</td>\
-                                <td>'+pt4Margin+'</td>\
-                            </tr>\
-                            <tr>\
-                                <td>5</td>\
-                                <td>'+pt5T_list+'</td>\
-                                <td>'+pt5F_list+'</td>\
-                                <td>'+pt5Margin+'</td>\
-                            </tr>\
-                            <tr>\
-                                <td>6</td>\
-                                <td>'+pt6T_list+'</td>\
-                                <td>'+pt6F_list+'</td>\
-                                <td>'+pt6Margin+'</td>\
-                            </tr>';
-            $('#result_table tbody').append(infoHtml);
+            let infoHtml = '<div class="position_box position04">\
+                                <h3 class="title">Position 4</h3>\
+                                <div class="score_box">\
+                                    <p class="success">득점 : <span class="score">'+pt4T_list+'점</span> (<span class="percent">36%</span>)</p>\
+                                    <p class="fail">실점 : <span class="score">'+pt4F_list+'점</span> (<span class="percent">36%</span>)</p>\
+                                    <p class="margin">마진 : <span class="margin_score">'+pt4Margin+'</span></p>\
+                                </div>\
+                                <div class="img_box"><img src="../static/images/position4.png"></div>\
+                            </div>\
+                            <div class="position_box position03">\
+                                <h3 class="title">Position 3</h3>\
+                                <div class="score_box">\
+                                    <p class="success">득점 : <span class="score">'+pt3T_list+'점</span> (<span class="percent">36%</span>)</p>\
+                                    <p class="fail">실점 : <span class="score">'+pt3F_list+'점</span> (<span class="percent">36%</span>)</p>\
+                                    <p class="margin">마진 : <span class="margin_score">'+pt3Margin+'</span></p>\
+                                </div>\
+                                <div class="img_box"><img src="../static/images/position3.png"></div>\
+                            </div>\
+                            <div class="position_box position02">\
+                                <h3 class="title">Position 2</h3>\
+                                <div class="score_box">\
+                                    <p class="success">득점 : <span class="score">'+pt2T_list+'점</span> (<span class="percent">36%</span>)</p>\
+                                    <p class="fail">실점 : <span class="score">'+pt2F_list+'점</span> (<span class="percent">36%</span>)</p>\
+                                    <p class="margin">마진 : <span class="margin_score">'+pt2Margin+'</span></p>\
+                                </div>\
+                                <div class="img_box"><img src="../static/images/position2.png"></div>\
+                            </div>\
+                            <div class="position_box not_position">\
+                                <h3 class="title">Not Position</h3>\
+                                <div class="score_box">\
+                                    <p class="success">득점 : <span class="score">27점</span> (<span class="percent">36%</span>)</p>\
+                                    <p class="fail">실점 : <span class="score">27점</span> (<span class="percent">36%</span>)</p>\
+                                    <p class="margin">마진 : <span class="margin_score">8</span></p>\
+                                </div>\
+                            </div>\
+                            <div class="position_box position05">\
+                                <h3 class="title">Position 5</h3>\
+                                <div class="score_box">\
+                                    <p class="success">득점 : <span class="score">'+pt5T_list+'점</span> (<span class="percent">36%</span>)</p>\
+                                    <p class="fail">실점 : <span class="score">'+pt5F_list+'점</span> (<span class="percent">36%</span>)</p>\
+                                    <p class="margin">마진 : <span class="margin_score">'+pt5Margin+'</span></p>\
+                                </div>\
+                                <div class="img_box"><img src="../static/images/position5.png"></div>\
+                            </div>\
+                            <div class="position_box position06">\
+                                <h3 class="title">Position 6</h3>\
+                                <div class="score_box">\
+                                    <p class="success">득점 : <span class="score">'+pt6T_list+'점</span> (<span class="percent">36%</span>)</p>\
+                                    <p class="fail">실점 : <span class="score">'+pt6F_list+'점</span> (<span class="percent">36%</span>)</p>\
+                                    <p class="margin">마진 : <span class="margin_score">'+pt6Margin+'</span></p>\
+                                </div>\
+                                <div class="img_box"><img src="../static/images/position6.png"></div>\
+                            </div>\
+                            <div class="position_box position01">\
+                                <h3 class="title">Position 1</h3>\
+                                <div class="score_box">\
+                                    <p class="success">득점 : <span class="score">'+pt1T_list+'점</span> (<span class="percent">36%</span>)</p>\
+                                    <p class="fail">실점 : <span class="score">'+pt1F_list+'점</span> (<span class="percent">36%</span>)</p>\
+                                    <p class="margin">마진 : <span class="margin_score">8</span></p>\
+                                </div>\
+                                <div class="img_box"><img src="../static/images/position1.png"></div>\
+                            </div>\
+                            <div class="position_box all_position">\
+                                <h3 class="title">All Position</h3>\
+                                <div class="score_box">\
+                                    <p class="success">득점 : <span class="score">27점</span> (<span class="percent">36%</span>)</p>\
+                                    <p class="fail">실점 : <span class="score">27점</span> (<span class="percent">36%</span>)</p>\
+                                    <p class="margin">마진 : <span class="margin_score">'+pt1Margin+'</span></p>\
+                                </div>\
+                                <p class="result">Result : <span class="result_text">WIN</span></p>\
+                            </div>';
+            $('.position_wrap').append(infoHtml);
         }
     </script>
 </head>
 <body>
-    <form method="POST">
-        <select id="gameMonth">
-            <option value="0" selected>경기 날짜</option>
-        </select>
-        <select id="gameNum">
-            <option value="0" selected>경기 순번</option>
-        </select>
-        <select id="gameTeam">
-            <option value="0" selected>배구팀</option>
-        </select>
-        <select id="gamePlayer">
-            <option value="0" selected>배구선수</option>
-        </select>
+<div class="wrapper">
+	<div class="container">
 
-        <button type="button" onclick="register()">등록</button>
-    </form>
+		<!-- 타이틀 영역 -->
+		<div class="title_wrap">
+			<h1>volleybbong</h1>
+			<p>women’s volleyball</p>
+		</div>
 
-    <table id="result_table">
-        <thead>
-            <tr>
-                <th>포지션</th>
-                <th>T의 개수</th>
-                <th>F의 개수</th>
-                <th>마진</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
+		<!-- select 영역 -->
+		<div class="select_wrap">
+			<div class="select_box">
+				<select id="gameMonth">
+					<option>경기날짜</option>
+				</select>
+				<select id="gameNum">
+					<option>경기번호</option>
+				</select>
+				<select id="gameTeam">
+					<option>배구팀</option>
+				</select>
+				<select id="gamePlayer">
+					<option>배구선수</option>
+				</select>
+			</div>
+			<div class="select_submit">
+				<button type="button" onclick="register()">전송</button>
+			</div>
+		</div>
+
+		<!-- 포지션 영역 -->
+		<div class="position_wrap">
+
+		</div>
+	</div>
+</div>
 </body>
 </html>
