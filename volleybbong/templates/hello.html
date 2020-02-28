@@ -30,6 +30,8 @@
         $(document).on("change", "#gameMonth", function() {
             var gameMonthVal = $('#gameMonth').val();
             $('#gameNum').html('<option>경기번호</option>');
+            $('#gameTeam').html('<option>배구팀</option>');
+            $('#gamePlayer').html('<option>배구선수</option>');
             $.ajax({
                 type:"POST",
                 url: "/number",
@@ -59,6 +61,7 @@
 		    var gameMonthVal = $('#gameMonth').val();
             var gameNumVal = $('#gameNum').val();
             $('#gameTeam').html('<option>배구팀</option>');
+            $('#gamePlayer').html('<option>배구선수</option>');
             $.ajax({
                 type:"POST",
                 url: "/team",
@@ -127,46 +130,49 @@
                     console.log(response)
                     $('.position_wrap').html('');
                     allInfo(
-                        response['pt1T_list'], response['pt1F_list'], response['pt1Margin'],
-                        response['pt2T_list'], response['pt2F_list'], response['pt2Margin'],
-                        response['pt3T_list'], response['pt3F_list'], response['pt3Margin'],
-                        response['pt4T_list'], response['pt4F_list'], response['pt4Margin'],
-                        response['pt5T_list'], response['pt5F_list'], response['pt5Margin'],
-                        response['pt6T_list'], response['pt6F_list'], response['pt6Margin']
+                        response['position1T'], response['position1F'], response['position1M'],
+                        response['position2T'], response['position2F'], response['position2M'],
+                        response['position3T'], response['position3F'], response['position3M'],
+                        response['position4T'], response['position4F'], response['position4M'],
+                        response['position5T'], response['position5F'], response['position5M'],
+                        response['position6T'], response['position6F'], response['position6M'],
+                        response['allT'], response['allF'], response['allM'],
+                        response['ourResult'], response['gamePlayer']
                     )
                 }
             })
         }
-        function allInfo(pt1T_list, pt1F_list, pt1Margin,
-                         pt2T_list, pt2F_list, pt2Margin,
-                         pt3T_list, pt3F_list, pt3Margin,
-                         pt4T_list, pt4F_list, pt4Margin,
-                         pt5T_list, pt5F_list, pt5Margin,
-                         pt6T_list, pt6F_list, pt6Margin) {
+        function allInfo(position1T, position1F, position1M,
+                         position2T, position2F, position2M,
+                         position3T, position3F, position3M,
+                         position4T, position4F, position4M,
+                         position5T, position5F, position5M,
+                         position6T, position6F, position6M,
+                         allT, allF, allM, ourResult, gamePlayer) {
             let infoHtml = '<div class="position_box position04">\
                                 <h3 class="title">Position 4</h3>\
                                 <div class="score_box">\
-                                    <p class="success">득점 : <span class="score">'+pt4T_list+'점</span> (<span class="percent">36%</span>)</p>\
-                                    <p class="fail">실점 : <span class="score">'+pt4F_list+'점</span> (<span class="percent">36%</span>)</p>\
-                                    <p class="margin">마진 : <span class="margin_score">'+pt4Margin+'</span></p>\
+                                    <p class="success">득점 : <span class="score">'+position4T+'점</span> (<span class="percent">36%</span>)</p>\
+                                    <p class="fail">실점 : <span class="score">'+position4F+'점</span> (<span class="percent">36%</span>)</p>\
+                                    <p class="margin">마진 : <span class="margin_score">'+position4M+'</span></p>\
                                 </div>\
                                 <div class="img_box"><img src="../static/images/position4.png"></div>\
                             </div>\
                             <div class="position_box position03">\
                                 <h3 class="title">Position 3</h3>\
                                 <div class="score_box">\
-                                    <p class="success">득점 : <span class="score">'+pt3T_list+'점</span> (<span class="percent">36%</span>)</p>\
-                                    <p class="fail">실점 : <span class="score">'+pt3F_list+'점</span> (<span class="percent">36%</span>)</p>\
-                                    <p class="margin">마진 : <span class="margin_score">'+pt3Margin+'</span></p>\
+                                    <p class="success">득점 : <span class="score">'+position3T+'점</span> (<span class="percent">36%</span>)</p>\
+                                    <p class="fail">실점 : <span class="score">'+position3F+'점</span> (<span class="percent">36%</span>)</p>\
+                                    <p class="margin">마진 : <span class="margin_score">'+position3M+'</span></p>\
                                 </div>\
                                 <div class="img_box"><img src="../static/images/position3.png"></div>\
                             </div>\
                             <div class="position_box position02">\
                                 <h3 class="title">Position 2</h3>\
                                 <div class="score_box">\
-                                    <p class="success">득점 : <span class="score">'+pt2T_list+'점</span> (<span class="percent">36%</span>)</p>\
-                                    <p class="fail">실점 : <span class="score">'+pt2F_list+'점</span> (<span class="percent">36%</span>)</p>\
-                                    <p class="margin">마진 : <span class="margin_score">'+pt2Margin+'</span></p>\
+                                    <p class="success">득점 : <span class="score">'+position2T+'점</span> (<span class="percent">36%</span>)</p>\
+                                    <p class="fail">실점 : <span class="score">'+position2F+'점</span> (<span class="percent">36%</span>)</p>\
+                                    <p class="margin">마진 : <span class="margin_score">'+position2M+'</span></p>\
                                 </div>\
                                 <div class="img_box"><img src="../static/images/position2.png"></div>\
                             </div>\
@@ -181,38 +187,38 @@
                             <div class="position_box position05">\
                                 <h3 class="title">Position 5</h3>\
                                 <div class="score_box">\
-                                    <p class="success">득점 : <span class="score">'+pt5T_list+'점</span> (<span class="percent">36%</span>)</p>\
-                                    <p class="fail">실점 : <span class="score">'+pt5F_list+'점</span> (<span class="percent">36%</span>)</p>\
-                                    <p class="margin">마진 : <span class="margin_score">'+pt5Margin+'</span></p>\
+                                    <p class="success">득점 : <span class="score">'+position5T+'점</span> (<span class="percent">36%</span>)</p>\
+                                    <p class="fail">실점 : <span class="score">'+position5F+'점</span> (<span class="percent">36%</span>)</p>\
+                                    <p class="margin">마진 : <span class="margin_score">'+position5M+'</span></p>\
                                 </div>\
                                 <div class="img_box"><img src="../static/images/position5.png"></div>\
                             </div>\
                             <div class="position_box position06">\
                                 <h3 class="title">Position 6</h3>\
                                 <div class="score_box">\
-                                    <p class="success">득점 : <span class="score">'+pt6T_list+'점</span> (<span class="percent">36%</span>)</p>\
-                                    <p class="fail">실점 : <span class="score">'+pt6F_list+'점</span> (<span class="percent">36%</span>)</p>\
-                                    <p class="margin">마진 : <span class="margin_score">'+pt6Margin+'</span></p>\
+                                    <p class="success">득점 : <span class="score">'+position6T+'점</span> (<span class="percent">36%</span>)</p>\
+                                    <p class="fail">실점 : <span class="score">'+position6F+'점</span> (<span class="percent">36%</span>)</p>\
+                                    <p class="margin">마진 : <span class="margin_score">'+position6M+'</span></p>\
                                 </div>\
                                 <div class="img_box"><img src="../static/images/position6.png"></div>\
                             </div>\
                             <div class="position_box position01">\
                                 <h3 class="title">Position 1</h3>\
                                 <div class="score_box">\
-                                    <p class="success">득점 : <span class="score">'+pt1T_list+'점</span> (<span class="percent">36%</span>)</p>\
-                                    <p class="fail">실점 : <span class="score">'+pt1F_list+'점</span> (<span class="percent">36%</span>)</p>\
-                                    <p class="margin">마진 : <span class="margin_score">8</span></p>\
+                                    <p class="success">득점 : <span class="score">'+position1T+'점</span> (<span class="percent">36%</span>)</p>\
+                                    <p class="fail">실점 : <span class="score">'+position1F+'점</span> (<span class="percent">36%</span>)</p>\
+                                    <p class="margin">마진 : <span class="margin_score">'+position1M+'</span></p>\
                                 </div>\
                                 <div class="img_box"><img src="../static/images/position1.png"></div>\
                             </div>\
                             <div class="position_box all_position">\
                                 <h3 class="title">All Position</h3>\
                                 <div class="score_box">\
-                                    <p class="success">득점 : <span class="score">27점</span> (<span class="percent">36%</span>)</p>\
-                                    <p class="fail">실점 : <span class="score">27점</span> (<span class="percent">36%</span>)</p>\
-                                    <p class="margin">마진 : <span class="margin_score">'+pt1Margin+'</span></p>\
+                                    <p class="success">득점 : <span class="score">'+allT+'점</span> (<span class="percent">36%</span>)</p>\
+                                    <p class="fail">실점 : <span class="score">'+allF+'점</span> (<span class="percent">36%</span>)</p>\
+                                    <p class="margin">마진 : <span class="margin_score">'+allM+'</span></p>\
                                 </div>\
-                                <p class="result">Result : <span class="result_text">WIN</span></p>\
+                                <p class="result">Result : <span class="result_text">'+ourResult+'</span></p>\
                             </div>';
             $('.position_wrap').append(infoHtml);
         }
