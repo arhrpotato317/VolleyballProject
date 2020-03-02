@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>사용자 입력</title>
+    <title>발리뽕</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
@@ -40,7 +40,6 @@
 
                     console.log(response)
                     if(response["result"] == "success") {
-                        alert('경기번호를 불러왔습니다.');
                         console.log(response["msg"]);
                         for(var i=0; i<response["msg"].length; i++) {
                             optionNumber(response["msg"][i])
@@ -69,7 +68,6 @@
                 success: function(response) {
                     console.log(response)
                     if(response["result"] == "success") {
-                        alert('경기팀을 불러왔습니다.');
                         console.log(response["msg"]);
                         for(var i=0; i<response["msg"].length; i++) {
                             optionTeam(response["msg"][i])
@@ -96,7 +94,6 @@
                 url: "/player",
                 data: { month: gameMonthVal, number: gameNumVal, team: gameTeamVal },
                 success: function(response) {
-                    alert('선수를 불러왔습니다.');
                     console.log(response)
                     for(var i=0; i<response.length; i++) {
                         optionPlayer(response[i])
