@@ -134,7 +134,7 @@
                         response['position5T'], response['position5F'], response['position5M'],
                         response['position6T'], response['position6F'], response['position6M'],
                         response['allT'], response['allF'], response['allM'],
-                        response['ourResult'], response['gamePlayer']
+                        response['ourTeamResult'], response['gamePlayer']
                     )
                 }
             })
@@ -145,7 +145,7 @@
                          position4T, position4F, position4M,
                          position5T, position5F, position5M,
                          position6T, position6F, position6M,
-                         allT, allF, allM, ourResult, gamePlayer) {
+                         allT, allF, allM, ourTeamResult, gamePlayer) {
             let infoHtml = '<div class="position_box position04">\
                                 <h3 class="title">Position 4</h3>\
                                 <div class="score_box">\
@@ -215,7 +215,7 @@
                                     <p class="fail">실점 : <span class="score">'+allF+'점</span> (<span class="percent">36%</span>)</p>\
                                     <p class="margin">마진 : <span class="margin_score">'+allM+'</span></p>\
                                 </div>\
-                                <p class="result">Result : <span class="result_text">'+ourResult+'</span></p>\
+                                <p class="result">Result : <span class="result_text">'+ourTeamResult+'</span></p>\
                             </div>';
             $('.position_wrap').append(infoHtml);
         }
