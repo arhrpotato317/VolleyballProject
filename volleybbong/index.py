@@ -48,7 +48,6 @@ for month in gameMonth:
 @app.route('/')
 def home():
     return render_template('hello.html')
-app.run()  # Debug mode: off
 
 @app.route('/month', methods=['GET'])
 def month_get():
